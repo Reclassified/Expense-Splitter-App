@@ -488,4 +488,40 @@ body {
   .form-input:focus {
     border-color: #667eea;
   }
+}
+
+/* High Contrast Accessibility Theme */
+body.high-contrast {
+  background: #000 !important;
+  color: #fff !important;
+}
+body.high-contrast .card,
+body.high-contrast .navbar,
+body.high-contrast .main-content {
+  background: #000 !important;
+  color: #fff !important;
+  border: 2px solid #fff !important;
+}
+body.high-contrast .btn,
+body.high-contrast .btn-primary,
+body.high-contrast .btn-secondary,
+body.high-contrast .btn-success,
+body.high-contrast .btn-danger {
+  background: #fff !important;
+  color: #000 !important;
+  border: 2px solid #fff !important;
+}
+body.high-contrast .btn:hover {
+  background: #ff0 !important;
+  color: #000 !important;
+}
+body.high-contrast a,
+body.high-contrast .nav-link {
+  color: #0ff !important;
+  text-decoration: underline;
+}
+body.high-contrast .error-message {
+  color: #ff0 !important;
+  background: #000 !important;
+  border: 2px solid #ff0 !important;
 } 

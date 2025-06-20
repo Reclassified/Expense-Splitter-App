@@ -26,6 +26,11 @@ function App() {
   const [context, setContext] = useState({});
   const [unreadNotifications, setUnreadNotifications] = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [highContrast, setHighContrast] = useState(false);
+
+  useEffect(() => {
+    document.body.classList.toggle('high-contrast', highContrast);
+  }, [highContrast]);
 
   useEffect(() => {
     // Check if user is already logged in
@@ -181,6 +186,9 @@ function App() {
           <h1>{t('Welcome to Splitter App')}</h1>
           <button onClick={() => i18n.changeLanguage('en')}>EN</button>
           <button onClick={() => i18n.changeLanguage('fr')}>FR</button>
+          <button onClick={() => setHighContrast((v) => !v)}>
+            {highContrast ? 'Disable High Contrast' : 'Enable High Contrast'}
+          </button>
         </div>
         {user && (
           <div className="header-right">
