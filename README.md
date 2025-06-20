@@ -1,5 +1,7 @@
 # Splitter App
 
+![CI](https://github.com/Reclassified/Expense-Splitter-App/actions/workflows/ci.yml/badge.svg)
+
 A full-stack expense splitter app with React frontend, Node.js/Express backend, and SQLite database.
 
 ## Table of Contents
