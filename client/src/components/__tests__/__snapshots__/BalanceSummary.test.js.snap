@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BalanceSummary renders correctly and matches snapshot 1`] = `
+<div>
+  <div
+    class="summary-section"
+  >
+    <h3>
+      Group Summary
+    </h3>
+    <div
+      class="summary-stats"
+    >
+      <div
+        class="stat-item"
+      >
+        <span
+          class="stat-label"
+        >
+          Total Expenses:
+        </span>
+        <span
+          class="stat-value"
+        >
+          $
+          123.45
+        </span>
+      </div>
+      <div
+        class="stat-item"
+      >
+        <span
+          class="stat-label"
+        >
+          Total Paid:
+        </span>
+        <span
+          class="stat-value"
+        >
+          $
+          100.00
+        </span>
+      </div>
+      <div
+        class="stat-item"
+      >
+        <span
+          class="stat-label"
+        >
+          Status:
+        </span>
+        <span
+          class="stat-value unbalanced"
+        >
+          Unbalanced
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;

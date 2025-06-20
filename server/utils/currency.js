@@ -35,4 +35,4 @@ async function convert(amount, from, to) {
   return amount * rates[to];
 }
 
-module.exports = { getRates, convert };
+module.exports = { getRates, convert, ratesCache };
