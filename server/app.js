@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsDoc = require('swagger-jsdoc');
 
 const authRoutes = require('./routes/auth');
 const groupRoutes = require('./routes/groups');
@@ -12,6 +14,27 @@ const notificationRoutes = require('./routes/notifications');
 const currencyRoutes = require('./routes/currency');
 
 const app = express();
+
+// Swagger setup
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Expense Splitter API',
+      version: '1.0.0',
+      description: 'API documentation for the Expense Splitter application',
+    },
+    servers: [
+      {
+        url: 'http://localhost:3001',
+      },
+    ],
+  },
+  apis: ['./routes/*.js'],
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use(cors());
 app.use(express.json());

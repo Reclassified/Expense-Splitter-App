@@ -4,41 +4,47 @@ const db = require('../database');
 
 const router = express.Router();
 
-// Get all groups for the authenticated user
-router.get('/', authenticateToken, (req, res) => {
-  try {
-    const userId = req.user.userId;
+/**
+ * @swagger
+ * tags:
+ *   name: Groups
+ *   description: API for managing groups
+ */
 
-    const groups = db
-      .prepare(
-        `
-      SELECT 
-        g.id, 
-        g.name, 
-        g.description, 
-        u.username as created_by_username,
-        gm.role,
-        (SELECT COUNT(*) FROM group_members WHERE group_id = g.id) as member_count,
-        (SELECT COUNT(*) FROM expenses WHERE group_id = g.id) as expense_count,
-        (SELECT EXISTS(SELECT 1 FROM balances WHERE group_id = g.id AND user_id = ? AND net_balance != 0)) as has_unpaid_balance
-      FROM groups g
-      JOIN users u ON g.created_by = u.id
-      JOIN group_members gm ON g.id = gm.group_id
-      WHERE gm.user_id = ?
-      GROUP BY g.id, g.name, g.description, u.username, gm.role
-      ORDER BY g.created_at DESC
-    `,
-      )
-      .all(userId, userId);
-
-    res.json(groups);
-  } catch (error) {
-    console.error('Error fetching groups:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-// Create a new group
+/**
+ * @swagger
+ * /api/groups:
+ *   post:
+ *     summary: Create a new group
+ *     tags: [Groups]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - members
+ *             properties:
+ *               name:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               currency:
+ *                 type: string
+ *               members:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *     responses:
+ *       '201':
+ *         description: Group created successfully
+ *       '400':
+ *         description: Invalid input
+ */
 router.post('/', authenticateToken, (req, res) => {
   try {
     const { name, description } = req.body;
@@ -84,7 +90,79 @@ router.post('/', authenticateToken, (req, res) => {
   }
 });
 
-// Get group details by ID
+/**
+ * @swagger
+ * /api/groups:
+ *   get:
+ *     summary: Get all groups for the logged-in user
+ *     tags: [Groups]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: A list of groups
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ */
+router.get('/', authenticateToken, (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    const groups = db
+      .prepare(
+        `
+      SELECT 
+        g.id, 
+        g.name, 
+        g.description, 
+        u.username as created_by_username,
+        gm.role,
+        (SELECT COUNT(*) FROM group_members WHERE group_id = g.id) as member_count,
+        (SELECT COUNT(*) FROM expenses WHERE group_id = g.id) as expense_count,
+        (SELECT EXISTS(SELECT 1 FROM balances WHERE group_id = g.id AND user_id = ? AND net_balance != 0)) as has_unpaid_balance
+      FROM groups g
+      JOIN users u ON g.created_by = u.id
+      JOIN group_members gm ON g.id = gm.group_id
+      WHERE gm.user_id = ?
+      GROUP BY g.id, g.name, g.description, u.username, gm.role
+      ORDER BY g.created_at DESC
+    `,
+      )
+      .all(userId, userId);
+
+    res.json(groups);
+  } catch (error) {
+    console.error('Error fetching groups:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+/**
+ * @swagger
+ * /api/groups/{groupId}:
+ *   get:
+ *     summary: Get details of a specific group
+ *     tags: [Groups]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: groupId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       '200':
+ *         description: Group details
+ *       '403':
+ *         description: Access denied
+ *       '404':
+ *         description: Group not found
+ */
 router.get('/:groupId', authenticateToken, (req, res) => {
   try {
     const { groupId } = req.params;
