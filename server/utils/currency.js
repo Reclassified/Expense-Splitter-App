@@ -10,7 +10,7 @@ let ratesCache = {
 async function getRates(base = 'USD') {
   const now = Date.now();
   // Cache for 1 hour
-  if (ratesCache.data && (now - ratesCache.lastUpdated < 3600 * 1000)) {
+  if (ratesCache.data && now - ratesCache.lastUpdated < 3600 * 1000) {
     return ratesCache.data.rates;
   }
 
@@ -35,4 +35,4 @@ async function convert(amount, from, to) {
   return amount * rates[to];
 }
 
-module.exports = { getRates, convert }; 
+module.exports = { getRates, convert };

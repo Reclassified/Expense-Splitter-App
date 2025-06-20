@@ -1,11 +1,11 @@
 const Database = require('better-sqlite3');
-const bcrypt = require('bcryptjs');
 const path = require('path');
 
 // Determine the database path based on the environment
-const dbPath = process.env.NODE_ENV === 'test' 
-  ? ':memory:' 
-  : path.resolve(__dirname, 'expense_splitter.db');
+const dbPath =
+  process.env.NODE_ENV === 'test'
+    ? ':memory:'
+    : path.resolve(__dirname, 'expense_splitter.db');
 
 const db = new Database(dbPath);
 
@@ -155,4 +155,4 @@ createRecurringExpensesTable.run();
 createPaymentsTable.run();
 createNotificationsTable.run();
 
-module.exports = db; 
+module.exports = db;

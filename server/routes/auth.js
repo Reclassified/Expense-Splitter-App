@@ -2,7 +2,6 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../database');
-const authenticateToken = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -16,24 +15,28 @@ const router = express.Router();
 // Input validation middleware
 const validateRegistration = (req, res, next) => {
   const { username, email, password } = req.body;
-  
+
   if (!username || !email || !password) {
     return res.status(400).json({ error: 'All fields are required' });
   }
-  
+
   if (username.length < 3) {
-    return res.status(400).json({ error: 'Username must be at least 3 characters' });
+    return res
+      .status(400)
+      .json({ error: 'Username must be at least 3 characters' });
   }
-  
+
   if (password.length < 6) {
-    return res.status(400).json({ error: 'Password must be at least 6 characters' });
+    return res
+      .status(400)
+      .json({ error: 'Password must be at least 6 characters' });
   }
-  
+
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
     return res.status(400).json({ error: 'Invalid email format' });
   }
-  
+
   next();
 };
 
@@ -71,36 +74,42 @@ const validateRegistration = (req, res, next) => {
 router.post('/register', validateRegistration, async (req, res) => {
   try {
     const { username, email, password } = req.body;
-    
+
     // Check if user already exists
-    const existingUser = db.prepare('SELECT * FROM users WHERE username = ? OR email = ?').get(username, email);
+    const existingUser = db
+      .prepare('SELECT * FROM users WHERE username = ? OR email = ?')
+      .get(username, email);
     if (existingUser) {
-      return res.status(400).json({ error: 'Username or email already exists' });
+      return res
+        .status(400)
+        .json({ error: 'Username or email already exists' });
     }
-    
+
     // Hash password
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-    
+
     // Insert new user
-    const insertUser = db.prepare('INSERT INTO users (username, email, password) VALUES (?, ?, ?)');
+    const insertUser = db.prepare(
+      'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
+    );
     const result = insertUser.run(username, email, hashedPassword);
-    
+
     // Create JWT token
     const token = jwt.sign(
       { userId: result.lastInsertRowid, username },
       process.env.JWT_SECRET || 'your-secret-key',
-      { expiresIn: '24h' }
+      { expiresIn: '24h' },
     );
-    
+
     res.status(201).json({
       message: 'User registered successfully',
       token,
       user: {
         id: result.lastInsertRowid,
         username,
-        email
-      }
+        email,
+      },
     });
   } catch (error) {
     console.error('Registration error:', error);
@@ -147,38 +156,42 @@ router.post('/register', validateRegistration, async (req, res) => {
 router.post('/login', (req, res) => {
   try {
     const { username, password } = req.body;
-    
+
     if (!username || !password) {
-      return res.status(400).json({ error: 'Username and password are required' });
+      return res
+        .status(400)
+        .json({ error: 'Username and password are required' });
     }
-    
+
     // Find user
-    const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
+    const user = db
+      .prepare('SELECT * FROM users WHERE username = ?')
+      .get(username);
     if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-    
+
     // Check password
     const isValidPassword = bcrypt.compareSync(password, user.password);
     if (!isValidPassword) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-    
+
     // Create JWT token
     const token = jwt.sign(
       { userId: user.id, username: user.username },
       process.env.JWT_SECRET || 'your-secret-key',
-      { expiresIn: '24h' }
+      { expiresIn: '24h' },
     );
-    
+
     res.json({
       message: 'Login successful',
       token,
       user: {
         id: user.id,
         username: user.username,
-        email: user.email
-      }
+        email: user.email,
+      },
     });
   } catch (error) {
     console.error('Login error:', error);
@@ -190,12 +203,16 @@ router.post('/login', (req, res) => {
 router.post('/reset-password', async (req, res) => {
   const { username, newPassword } = req.body;
   if (!username || !newPassword) {
-    return res.status(400).json({ error: 'Username and new password required' });
+    return res
+      .status(400)
+      .json({ error: 'Username and new password required' });
   }
   try {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
-    const result = db.prepare('UPDATE users SET password = ? WHERE username = ?').run(hashedPassword, username);
+    const result = db
+      .prepare('UPDATE users SET password = ? WHERE username = ?')
+      .run(hashedPassword, username);
     if (result.changes === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -206,4 +223,4 @@ router.post('/reset-password', async (req, res) => {
   }
 });
 
-module.exports = router; 
+module.exports = router;
