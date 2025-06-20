@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
@@ -18,6 +19,7 @@ import api from './api';
 import './App.css';
 
 function App() {
+  const { t, i18n } = useTranslation();
   const [user, setUser] = useState(null);
   const [view, setView] = useState('login');
   const [viewProps, setViewProps] = useState({});
@@ -175,6 +177,11 @@ function App() {
   return (
     <div className="App">
       <header className="app-header">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <h1>{t('Welcome to Splitter App')}</h1>
+          <button onClick={() => i18n.changeLanguage('en')}>EN</button>
+          <button onClick={() => i18n.changeLanguage('fr')}>FR</button>
+        </div>
         {user && (
           <div className="header-right">
             <div
