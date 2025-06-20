@@ -7,6 +7,9 @@ import PaymentHistory from './PaymentHistory';
 import DebtSummary from './DebtSummary';
 import './Balances.css';
 
+const Loading = () => <div className="loading">Calculating balances...</div>;
+const ErrorMessage = ({ message }) => <div className="error-message">{message}</div>;
+
 const Balances = ({ group, onBack }) => {
   const [balanceData, setBalanceData] = useState(null);
   const [paymentHistory, setPaymentHistory] = useState([]);
@@ -42,15 +45,15 @@ const Balances = ({ group, onBack }) => {
   };
 
   if (loading) {
-    return <div className="loading">Calculating balances...</div>;
+    return <Loading />;
   }
 
   if (error) {
-    return <div className="error-message">{error}</div>;
+    return <ErrorMessage message={error} />;
   }
 
   if (!balanceData) {
-    return <div className="error-message">Failed to load balances</div>;
+    return <ErrorMessage message="Failed to load balances" />;
   }
 
   if (showSettleModal) {
