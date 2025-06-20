@@ -4,6 +4,33 @@ const db = require('../database');
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /balances/group/{groupId}:
+ *   get:
+ *     summary: Get balances for a group
+ *     tags: [Balances]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: groupId
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: Group ID
+ *     responses:
+ *       200:
+ *         description: Group balances and summary
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Access denied
+ */
 // Get balances for a group
 router.get('/group/:groupId', authenticateToken, (req, res) => {
   try {
@@ -75,6 +102,41 @@ router.get('/group/:groupId', authenticateToken, (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /balances/group/{groupId}/user/{userId}:
+ *   get:
+ *     summary: Get balances for a specific user in a group
+ *     tags: [Balances]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: groupId
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: Group ID
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: User ID
+ *     responses:
+ *       200:
+ *         description: User balances and expenses
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Access denied
+ *       404:
+ *         description: User not found in group
+ */
 // Get balances for a specific user in a group
 router.get('/group/:groupId/user/:userId', authenticateToken, (req, res) => {
   try {
@@ -133,6 +195,24 @@ router.get('/group/:groupId/user/:userId', authenticateToken, (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /balances/summary:
+ *   get:
+ *     summary: Get a summary of the current user's balances across all groups
+ *     tags: [Balances]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Balance summary
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *       401:
+ *         description: Unauthorized
+ */
 // Get a summary of the current user's balances across all groups
 router.get('/summary', authenticateToken, (req, res) => {
   try {

@@ -4,6 +4,50 @@ const db = require('../database');
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /payments:
+ *   post:
+ *     summary: Record a payment and update balances
+ *     tags: [Payments]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               groupId:
+ *                 type: integer
+ *               payeeId:
+ *                 type: integer
+ *               amount:
+ *                 type: number
+ *               currency:
+ *                 type: string
+ *               notes:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Payment recorded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 paymentId:
+ *                   type: integer
+ *       400:
+ *         description: Missing required fields for payment
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Failed to record payment
+ */
 // Record a payment and update balances
 router.post('/', authenticateToken, (req, res) => {
   const { groupId, payeeId, amount, currency, notes } = req.body;
@@ -55,6 +99,39 @@ router.post('/', authenticateToken, (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /payments:
+ *   get:
+ *     summary: Get payment history for a group
+ *     tags: [Payments]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: groupId
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: Group ID
+ *     responses:
+ *       200:
+ *         description: Payment history
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *       400:
+ *         description: Group ID is required
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Access denied
+ *       500:
+ *         description: Failed to fetch payment history
+ */
 // Get payment history for a group
 router.get('/', authenticateToken, (req, res) => {
   const { groupId } = req.query;
