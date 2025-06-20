@@ -13,10 +13,8 @@ const EditRecurringExpense = ({ expense, group, onBack }) => {
     endDate: '',
     isActive: true,
   });
-  const [groupMembers, setGroupMembers] = useState([]);
   const [paidBy, setPaidBy] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (expense) {
@@ -32,25 +30,21 @@ const EditRecurringExpense = ({ expense, group, onBack }) => {
       });
       setPaidBy(expense.paid_by);
     }
-    api.get(`/groups/${group.id}`).then(res => {
-      setGroupMembers(res.data.members);
+    api.get(`/groups/${group.id}`).then((res) => {
+      // const groupMembers = res.data.members; // Removed unused
     });
   }, [expense, group.id]);
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     try {
-      await api.put(`/expenses/recurring/${expense.id}`, { ...formData, paidBy });
+      await api.put(`/expenses/recurring/${expense.id}`, {
+        ...formData,
+        paidBy,
+      });
       onBack();
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to update');
-      setLoading(false);
     }
   };
 
@@ -59,7 +53,9 @@ const EditRecurringExpense = ({ expense, group, onBack }) => {
       <div className="create-expense-modal">
         <div className="modal-header">
           <h3>Edit Recurring Expense</h3>
-          <button onClick={onBack} className="close-btn">×</button>
+          <button onClick={onBack} className="close-btn">
+            ×
+          </button>
         </div>
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit}>
@@ -70,4 +66,4 @@ const EditRecurringExpense = ({ expense, group, onBack }) => {
   );
 };
 
-export default EditRecurringExpense; 
+export default EditRecurringExpense;

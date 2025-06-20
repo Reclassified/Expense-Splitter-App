@@ -14,6 +14,7 @@ import RecurringExpenses from './components/RecurringExpenses';
 import CreateRecurringExpense from './components/CreateRecurringExpense';
 import EditRecurringExpense from './components/EditRecurringExpense';
 import Notifications from './components/Notifications';
+import api from './api';
 import './App.css';
 
 function App() {
@@ -21,7 +22,6 @@ function App() {
   const [view, setView] = useState('login');
   const [viewProps, setViewProps] = useState({});
   const [context, setContext] = useState({});
-  const [refreshKey, setRefreshKey] = useState(0);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
 
@@ -29,7 +29,7 @@ function App() {
     // Check if user is already logged in
     const savedUser = localStorage.getItem('user');
     const token = localStorage.getItem('token');
-    
+
     if (savedUser && token) {
       setUser(JSON.parse(savedUser));
       setView('dashboard');
@@ -40,7 +40,7 @@ function App() {
   const fetchUnreadCount = async () => {
     try {
       const res = await api.get('/notifications');
-      const unread = res.data.filter(n => !n.is_read).length;
+      const unread = res.data.filter((n) => !n.is_read).length;
       setUnreadNotifications(unread);
     } catch (error) {
       // silent fail
@@ -66,7 +66,7 @@ function App() {
       setContext({ ...context, group: props });
     }
     if (newView === 'dashboard') {
-      setRefreshKey(prev => prev + 1); // Force dashboard to refresh
+      // Force dashboard to refresh
     }
     setView(newView);
     setViewProps(props);
@@ -76,9 +76,19 @@ function App() {
     if (!user) {
       switch (view) {
         case 'register':
-          return <Register onLogin={handleLogin} onSwitchToLogin={() => setView('login')} />;
+          return (
+            <Register
+              onLogin={handleLogin}
+              onSwitchToLogin={() => setView('login')}
+            />
+          );
         default:
-          return <Login onLogin={handleLogin} onSwitchToRegister={() => setView('register')} />;
+          return (
+            <Login
+              onLogin={handleLogin}
+              onSwitchToRegister={() => setView('register')}
+            />
+          );
       }
     }
 
@@ -90,23 +100,73 @@ function App() {
       case 'create-group':
         return <CreateGroup onBack={() => handleNavigate('groups')} />;
       case 'group-details':
-        return <GroupDetails group={context.group} onNavigate={handleNavigate} onBack={() => handleNavigate('groups')} />;
+        return (
+          <GroupDetails
+            group={context.group}
+            onNavigate={handleNavigate}
+            onBack={() => handleNavigate('groups')}
+          />
+        );
       case 'recurring-expenses':
-        return <RecurringExpenses group={context.group} onNavigate={handleNavigate} onBack={() => handleNavigate('group-details', context.group)} />;
+        return (
+          <RecurringExpenses
+            group={context.group}
+            onNavigate={handleNavigate}
+            onBack={() => handleNavigate('group-details', context.group)}
+          />
+        );
       case 'create-recurring-expense':
-        return <CreateRecurringExpense group={context.group} onBack={() => handleNavigate('recurring-expenses', context.group)} />;
+        return (
+          <CreateRecurringExpense
+            group={context.group}
+            onBack={() => handleNavigate('recurring-expenses', context.group)}
+          />
+        );
       case 'edit-recurring-expense':
-        return <EditRecurringExpense expense={viewProps} group={context.group} onBack={() => handleNavigate('recurring-expenses', context.group)} />;
+        return (
+          <EditRecurringExpense
+            expense={viewProps}
+            group={context.group}
+            onBack={() => handleNavigate('recurring-expenses', context.group)}
+          />
+        );
       case 'expenses':
-        return <Expenses group={context.group} onNavigate={handleNavigate} onBack={() => handleNavigate('group-details', context.group)} />;
+        return (
+          <Expenses
+            group={context.group}
+            onNavigate={handleNavigate}
+            onBack={() => handleNavigate('group-details', context.group)}
+          />
+        );
       case 'create-expense':
-        return <CreateExpense group={context.group} onBack={() => handleNavigate('expenses', context.group)} />;
+        return (
+          <CreateExpense
+            group={context.group}
+            onBack={() => handleNavigate('expenses', context.group)}
+          />
+        );
       case 'edit-expense':
-        return <EditExpense expense={viewProps} group={context.group} onBack={() => handleNavigate('expenses', context.group)} />;
+        return (
+          <EditExpense
+            expense={viewProps}
+            group={context.group}
+            onBack={() => handleNavigate('expenses', context.group)}
+          />
+        );
       case 'expense-details':
-        return <ExpenseDetails expense={viewProps} onBack={() => handleNavigate('expenses', context.group)} />;
+        return (
+          <ExpenseDetails
+            expense={viewProps}
+            onBack={() => handleNavigate('expenses', context.group)}
+          />
+        );
       case 'balances':
-        return <Balances group={context.group} onBack={() => handleNavigate('group-details', context.group)} />;
+        return (
+          <Balances
+            group={context.group}
+            onBack={() => handleNavigate('group-details', context.group)}
+          />
+        );
       default:
         return <Dashboard onNavigate={handleNavigate} />;
     }
@@ -117,28 +177,33 @@ function App() {
       <header className="app-header">
         {user && (
           <div className="header-right">
-            <div className="notifications-icon" onClick={() => setShowNotifications(!showNotifications)}>
+            <div
+              className="notifications-icon"
+              onClick={() => setShowNotifications(!showNotifications)}
+            >
               🔔
-              {unreadNotifications > 0 && <span className="badge">{unreadNotifications}</span>}
+              {unreadNotifications > 0 && (
+                <span className="badge">{unreadNotifications}</span>
+              )}
             </div>
             {showNotifications && (
-              <Notifications 
-                onMarkAsRead={() => fetchUnreadCount()} 
+              <Notifications
+                onMarkAsRead={() => fetchUnreadCount()}
                 onNavigate={(view, props) => {
                   setShowNotifications(false);
                   handleNavigate(view, props);
                 }}
               />
             )}
-            <button onClick={handleLogout} className="btn btn-danger">Logout</button>
+            <button onClick={handleLogout} className="btn btn-danger">
+              Logout
+            </button>
           </div>
         )}
       </header>
-      <main className="main-content">
-        {renderView()}
-      </main>
+      <main className="main-content">{renderView()}</main>
     </div>
   );
 }
 
-export default App; 
+export default App;

@@ -10,8 +10,6 @@ const Groups = ({ onNavigate }) => {
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
-  const token = localStorage.getItem('token');
-
   const fetchGroups = async () => {
     try {
       setLoading(true);
@@ -35,14 +33,17 @@ const Groups = ({ onNavigate }) => {
 
   const handleGroupCreated = () => {
     setShowCreateGroup(false);
-    setRefreshKey(prev => prev + 1); // Trigger a refresh
+    setRefreshKey((prev) => prev + 1); // Trigger a refresh
   };
 
   const getRoleColor = (role) => {
     switch (role) {
-      case 'owner': return 'owner';
-      case 'admin': return 'admin';
-      default: return 'member';
+      case 'owner':
+        return 'owner';
+      case 'admin':
+        return 'admin';
+      default:
+        return 'member';
     }
   };
 
@@ -87,7 +88,8 @@ const Groups = ({ onNavigate }) => {
           <div className="empty-state-icon">👥</div>
           <h3 className="empty-state-title">No Groups Yet</h3>
           <p className="empty-state-description">
-            Create your first group to start splitting expenses with friends and family.
+            Create your first group to start splitting expenses with friends and
+            family.
           </p>
           <button onClick={handleCreateGroup} className="btn btn-primary">
             Create Your First Group
@@ -95,9 +97,9 @@ const Groups = ({ onNavigate }) => {
         </div>
       ) : (
         <div className="groups-list">
-          {groups.map(group => (
-            <div 
-              key={group.id} 
+          {groups.map((group) => (
+            <div
+              key={group.id}
               className="group-card"
               onClick={() => onNavigate('group-details', group)}
             >
@@ -111,11 +113,11 @@ const Groups = ({ onNavigate }) => {
                     {getUnpaidBalanceBadge(group)}
                   </div>
                 </div>
-                
+
                 <p className="group-description">
                   {group.description || 'No description provided'}
                 </p>
-                
+
                 <div className="group-stats">
                   <div className="stat-item">
                     <span className="stat-icon">👥</span>
@@ -136,7 +138,7 @@ const Groups = ({ onNavigate }) => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="group-actions">
                 <div className="group-arrow">→</div>
               </div>
@@ -169,7 +171,7 @@ const Groups = ({ onNavigate }) => {
               </div>
               <div className="stat-card">
                 <span className="stat-number">
-                  {groups.filter(group => group.has_unpaid_balance).length}
+                  {groups.filter((group) => group.has_unpaid_balance).length}
                 </span>
                 <span className="stat-label">Groups with Balances</span>
               </div>
@@ -181,4 +183,4 @@ const Groups = ({ onNavigate }) => {
   );
 };
 
-export default Groups; 
+export default Groups;

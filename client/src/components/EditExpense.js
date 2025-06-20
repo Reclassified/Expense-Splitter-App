@@ -6,7 +6,7 @@ const EditExpense = ({ expense, onSave, onCancel }) => {
   const [formData, setFormData] = useState({
     title: expense.title,
     amount: expense.amount.toString(),
-    description: expense.description || ''
+    description: expense.description || '',
   });
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [groupMembers, setGroupMembers] = useState([]);
@@ -15,23 +15,23 @@ const EditExpense = ({ expense, onSave, onCancel }) => {
   const [splitMode, setSplitMode] = useState('equal'); // 'equal' or 'custom'
   const [customSplits, setCustomSplits] = useState({});
 
-  const token = localStorage.getItem('token');
-
   useEffect(() => {
     fetchGroupMembers();
     // Set selected members from expense
-    setSelectedMembers(expense.members.map(m => m.user_id));
+    setSelectedMembers(expense.members.map((m) => m.user_id));
     if (expense) {
       // Initialize split mode and custom splits
-      const isCustom = expense.members.some(m => m.share_amount !== expense.amount / expense.members.length);
+      const isCustom = expense.members.some(
+        (m) => m.share_amount !== expense.amount / expense.members.length,
+      );
       setSplitMode(isCustom ? 'custom' : 'equal');
       const initialSplits = {};
-      expense.members.forEach(member => {
+      expense.members.forEach((member) => {
         initialSplits[member.user_id] = member.share_amount;
       });
       setCustomSplits(initialSplits);
     }
-  }, [expense.id]);
+  }, [expense, fetchGroupMembers]);
 
   const fetchGroupMembers = async () => {
     try {
@@ -45,14 +45,14 @@ const EditExpense = ({ expense, onSave, onCancel }) => {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   const handleMemberToggle = (memberId) => {
-    setSelectedMembers(prev => {
+    setSelectedMembers((prev) => {
       if (prev.includes(memberId)) {
-        return prev.filter(id => id !== memberId);
+        return prev.filter((id) => id !== memberId);
       } else {
         return [...prev, memberId];
       }
@@ -60,13 +60,15 @@ const EditExpense = ({ expense, onSave, onCancel }) => {
   };
 
   const handleCustomSplitChange = (memberId, value) => {
-    setCustomSplits(prev => ({ ...prev, [memberId]: value }));
+    setCustomSplits((prev) => ({ ...prev, [memberId]: value }));
   };
 
   const validateCustomSplits = () => {
     if (splitMode !== 'custom') return true;
-    const total = Object.values(customSplits)
-      .reduce((sum, val) => sum + (parseFloat(val) || 0), 0);
+    const total = Object.values(customSplits).reduce(
+      (sum, val) => sum + (parseFloat(val) || 0),
+      0,
+    );
     return Math.abs(total - parseFloat(formData.amount)) < 0.01;
   };
 
@@ -102,9 +104,13 @@ const EditExpense = ({ expense, onSave, onCancel }) => {
         amount: parseFloat(formData.amount),
         description: formData.description.trim(),
         memberIds: selectedMembers,
-        splits: splitMode === 'custom' 
-          ? selectedMembers.map(id => ({ userId: id, amount: parseFloat(customSplits[id]) })) 
-          : null,
+        splits:
+          splitMode === 'custom'
+            ? selectedMembers.map((id) => ({
+                userId: id,
+                amount: parseFloat(customSplits[id]),
+              }))
+            : null,
       };
 
       await onSave(expenseData);
@@ -120,11 +126,13 @@ const EditExpense = ({ expense, onSave, onCancel }) => {
       <div className="edit-expense-modal">
         <div className="modal-header">
           <h3>Edit Expense</h3>
-          <button onClick={onCancel} className="close-btn">×</button>
+          <button onClick={onCancel} className="close-btn">
+            ×
+          </button>
         </div>
-        
+
         {error && <div className="error-message">{error}</div>}
-        
+
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="expenseTitle">Expense Title *</label>
@@ -138,7 +146,7 @@ const EditExpense = ({ expense, onSave, onCancel }) => {
               required
             />
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="expenseAmount">Amount ($) *</label>
             <input
@@ -153,7 +161,7 @@ const EditExpense = ({ expense, onSave, onCancel }) => {
               required
             />
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="expenseDescription">Description</label>
             <textarea
@@ -165,15 +173,27 @@ const EditExpense = ({ expense, onSave, onCancel }) => {
               rows="3"
             />
           </div>
-          
+
           <div className="form-group">
             <label>Split Between Members *</label>
             <div className="split-mode-toggle">
-              <button type="button" className={splitMode === 'equal' ? 'active' : ''} onClick={() => setSplitMode('equal')}>Equal</button>
-              <button type="button" className={splitMode === 'custom' ? 'active' : ''} onClick={() => setSplitMode('custom')}>Custom</button>
+              <button
+                type="button"
+                className={splitMode === 'equal' ? 'active' : ''}
+                onClick={() => setSplitMode('equal')}
+              >
+                Equal
+              </button>
+              <button
+                type="button"
+                className={splitMode === 'custom' ? 'active' : ''}
+                onClick={() => setSplitMode('custom')}
+              >
+                Custom
+              </button>
             </div>
             <div className="members-selection">
-              {groupMembers.map(member => (
+              {groupMembers.map((member) => (
                 <div key={member.user_id} className="member-item">
                   <label className="member-checkbox">
                     <input
@@ -183,31 +203,43 @@ const EditExpense = ({ expense, onSave, onCancel }) => {
                     />
                     <span className="member-name">{member.username}</span>
                   </label>
-                  {splitMode === 'custom' && selectedMembers.includes(member.user_id) && (
-                    <input
-                      type="number"
-                      className="split-input"
-                      value={customSplits[member.user_id]}
-                      onChange={(e) => handleCustomSplitChange(member.user_id, e.target.value)}
-                      placeholder="0.00"
-                      step="0.01"
-                    />
-                  )}
+                  {splitMode === 'custom' &&
+                    selectedMembers.includes(member.user_id) && (
+                      <input
+                        type="number"
+                        className="split-input"
+                        value={customSplits[member.user_id]}
+                        onChange={(e) =>
+                          handleCustomSplitChange(
+                            member.user_id,
+                            e.target.value,
+                          )
+                        }
+                        placeholder="0.00"
+                        step="0.01"
+                      />
+                    )}
                 </div>
               ))}
             </div>
             {splitMode === 'equal' && selectedMembers.length > 0 && (
               <p className="split-info">
-                Each member will pay: ${(parseFloat(formData.amount || 0) / selectedMembers.length).toFixed(2)}
+                Each member will pay: $
+                {(
+                  parseFloat(formData.amount || 0) / selectedMembers.length
+                ).toFixed(2)}
               </p>
             )}
             {splitMode === 'custom' && (
               <p className="split-info">
-                Total assigned: ${Object.values(customSplits).reduce((sum, val) => sum + (parseFloat(val) || 0), 0).toFixed(2)}
+                Total assigned: $
+                {Object.values(customSplits)
+                  .reduce((sum, val) => sum + (parseFloat(val) || 0), 0)
+                  .toFixed(2)}
               </p>
             )}
           </div>
-          
+
           <div className="modal-actions">
             <button type="button" onClick={onCancel} className="cancel-btn">
               Cancel
@@ -222,4 +254,4 @@ const EditExpense = ({ expense, onSave, onCancel }) => {
   );
 };
 
-export default EditExpense; 
+export default EditExpense;

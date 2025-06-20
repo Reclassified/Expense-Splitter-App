@@ -10,16 +10,9 @@ const GroupDetails = ({ group, onBack, onNavigate, onUpdate }) => {
   const [newMemberUsername, setNewMemberUsername] = useState('');
   const [currentUser] = useState(JSON.parse(localStorage.getItem('user')));
 
-  const token = localStorage.getItem('token');
-
   useEffect(() => {
-    if (group?.id) {
-      fetchGroupDetails();
-    } else {
-      setLoading(false);
-      setError("No group selected.");
-    }
-  }, [group?.id]);
+    fetchGroupDetails();
+  }, [fetchGroupDetails]);
 
   const fetchGroupDetails = async () => {
     try {
@@ -39,7 +32,9 @@ const GroupDetails = ({ group, onBack, onNavigate, onUpdate }) => {
     if (!newMemberUsername.trim()) return;
 
     try {
-      await api.post(`/groups/${group.id}/members`, { username: newMemberUsername.trim() });
+      await api.post(`/groups/${group.id}/members`, {
+        username: newMemberUsername.trim(),
+      });
       setNewMemberUsername('');
       setShowAddMember(false);
       fetchGroupDetails();
@@ -61,7 +56,9 @@ const GroupDetails = ({ group, onBack, onNavigate, onUpdate }) => {
 
   const handleRoleChange = async (memberId, newRole) => {
     try {
-      await api.patch(`/groups/${group.id}/members/${memberId}/role`, { role: newRole });
+      await api.patch(`/groups/${group.id}/members/${memberId}/role`, {
+        role: newRole,
+      });
       fetchGroupDetails();
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to update role');
@@ -70,13 +67,20 @@ const GroupDetails = ({ group, onBack, onNavigate, onUpdate }) => {
 
   const canManageMembers = () => {
     if (!groupDetails) return false;
-    const currentMember = groupDetails.members.find(m => m.user_id === currentUser.id);
-    return currentMember && (currentMember.role === 'owner' || currentMember.role === 'admin');
+    const currentMember = groupDetails.members.find(
+      (m) => m.user_id === currentUser.id,
+    );
+    return (
+      currentMember &&
+      (currentMember.role === 'owner' || currentMember.role === 'admin')
+    );
   };
 
   const canChangeRoles = () => {
     if (!groupDetails) return false;
-    const currentMember = groupDetails.members.find(m => m.user_id === currentUser.id);
+    const currentMember = groupDetails.members.find(
+      (m) => m.user_id === currentUser.id,
+    );
     return currentMember && currentMember.role === 'owner';
   };
 
@@ -88,7 +92,9 @@ const GroupDetails = ({ group, onBack, onNavigate, onUpdate }) => {
     return (
       <div className="error-message">
         {error || 'Group could not be loaded.'}
-        <button onClick={onBack} className="btn btn-secondary mt-3">Go Back</button>
+        <button onClick={onBack} className="btn btn-secondary mt-3">
+          Go Back
+        </button>
       </div>
     );
   }
@@ -96,22 +102,24 @@ const GroupDetails = ({ group, onBack, onNavigate, onUpdate }) => {
   return (
     <div className="group-details">
       <div className="group-details-header">
-        <button onClick={onBack} className="back-btn">← Back to Groups</button>
+        <button onClick={onBack} className="back-btn">
+          ← Back to Groups
+        </button>
         <h2>{groupDetails.name}</h2>
         <div className="group-actions">
-          <button 
+          <button
             onClick={() => onNavigate('expenses', groupDetails)}
             className="expenses-btn"
           >
             View Expenses
           </button>
-          <button 
+          <button
             onClick={() => onNavigate('balances', groupDetails)}
             className="balances-btn"
           >
             View Balances
           </button>
-          <button 
+          <button
             onClick={() => onNavigate('recurring-expenses', groupDetails)}
             className="recurring-btn"
           >
@@ -124,16 +132,24 @@ const GroupDetails = ({ group, onBack, onNavigate, onUpdate }) => {
 
       <div className="group-info-section">
         <h3>Group Information</h3>
-        <p><strong>Description:</strong> {groupDetails.description || 'No description'}</p>
-        <p><strong>Created by:</strong> {groupDetails.created_by_username}</p>
-        <p><strong>Created:</strong> {new Date(groupDetails.created_at).toLocaleDateString()}</p>
+        <p>
+          <strong>Description:</strong>{' '}
+          {groupDetails.description || 'No description'}
+        </p>
+        <p>
+          <strong>Created by:</strong> {groupDetails.created_by_username}
+        </p>
+        <p>
+          <strong>Created:</strong>{' '}
+          {new Date(groupDetails.created_at).toLocaleDateString()}
+        </p>
       </div>
 
       <div className="members-section">
         <div className="members-header">
           <h3>Members ({groupDetails.members.length})</h3>
           {canManageMembers() && (
-            <button 
+            <button
               onClick={() => setShowAddMember(true)}
               className="add-member-btn"
             >
@@ -153,23 +169,29 @@ const GroupDetails = ({ group, onBack, onNavigate, onUpdate }) => {
                 required
               />
               <button type="submit">Add</button>
-              <button type="button" onClick={() => setShowAddMember(false)}>Cancel</button>
+              <button type="button" onClick={() => setShowAddMember(false)}>
+                Cancel
+              </button>
             </form>
           </div>
         )}
 
         <div className="members-list">
-          {groupDetails.members.map(member => (
+          {groupDetails.members.map((member) => (
             <div key={member.id} className="member-item">
               <div className="member-info">
                 <span className="member-name">{member.username}</span>
-                <span className={`member-role ${member.role}`}>{member.role}</span>
+                <span className={`member-role ${member.role}`}>
+                  {member.role}
+                </span>
               </div>
               <div className="member-actions">
                 {canChangeRoles() && member.user_id !== currentUser.id && (
                   <select
                     value={member.role}
-                    onChange={(e) => handleRoleChange(member.user_id, e.target.value)}
+                    onChange={(e) =>
+                      handleRoleChange(member.user_id, e.target.value)
+                    }
                     disabled={member.role === 'owner'}
                   >
                     <option value="member">Member</option>
@@ -177,14 +199,16 @@ const GroupDetails = ({ group, onBack, onNavigate, onUpdate }) => {
                     <option value="owner">Owner</option>
                   </select>
                 )}
-                {canManageMembers() && member.user_id !== currentUser.id && member.role !== 'owner' && (
-                  <button 
-                    onClick={() => handleRemoveMember(member.user_id)}
-                    className="remove-member-btn"
-                  >
-                    Remove
-                  </button>
-                )}
+                {canManageMembers() &&
+                  member.user_id !== currentUser.id &&
+                  member.role !== 'owner' && (
+                    <button
+                      onClick={() => handleRemoveMember(member.user_id)}
+                      className="remove-member-btn"
+                    >
+                      Remove
+                    </button>
+                  )}
               </div>
             </div>
           ))}
@@ -194,4 +218,4 @@ const GroupDetails = ({ group, onBack, onNavigate, onUpdate }) => {
   );
 };
 
-export default GroupDetails; 
+export default GroupDetails;

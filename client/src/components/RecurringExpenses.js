@@ -9,7 +9,7 @@ const RecurringExpenses = ({ group, onBack, onNavigate }) => {
 
   useEffect(() => {
     fetchRecurringExpenses();
-  }, [group.id]);
+  }, [fetchRecurringExpenses]);
 
   const fetchRecurringExpenses = async () => {
     try {
@@ -24,7 +24,10 @@ const RecurringExpenses = ({ group, onBack, onNavigate }) => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this recurring expense?')) return;
+    if (
+      !window.confirm('Are you sure you want to delete this recurring expense?')
+    )
+      return;
     try {
       await api.delete(`/expenses/recurring/${id}`);
       fetchRecurringExpenses();
@@ -33,14 +36,20 @@ const RecurringExpenses = ({ group, onBack, onNavigate }) => {
     }
   };
 
-  if (loading) return <div className="loading">Loading recurring expenses...</div>;
+  if (loading)
+    return <div className="loading">Loading recurring expenses...</div>;
 
   return (
     <div className="expenses-container">
       <div className="expenses-header">
-        <button onClick={onBack} className="back-btn">← Back to Group</button>
+        <button onClick={onBack} className="back-btn">
+          ← Back to Group
+        </button>
         <h2>Recurring Expenses - {group.name}</h2>
-        <button onClick={() => onNavigate('create-recurring-expense', group)} className="btn btn-primary">
+        <button
+          onClick={() => onNavigate('create-recurring-expense', group)}
+          className="btn btn-primary"
+        >
           Add Recurring
         </button>
       </div>
@@ -49,15 +58,29 @@ const RecurringExpenses = ({ group, onBack, onNavigate }) => {
         <div className="empty-state">No recurring expenses found.</div>
       ) : (
         <div className="expenses-list">
-          {recurringExpenses.map(item => (
+          {recurringExpenses.map((item) => (
             <div key={item.id} className="expense-card">
               <h3>{item.title}</h3>
-              <p>Amount: ${item.amount} ({item.currency})</p>
+              <p>
+                Amount: ${item.amount} ({item.currency})
+              </p>
               <p>Frequency: {item.frequency}</p>
-              <p>Next due: {new Date(item.next_due_date).toLocaleDateString()}</p>
+              <p>
+                Next due: {new Date(item.next_due_date).toLocaleDateString()}
+              </p>
               <div>
-                <button onClick={() => onNavigate('edit-recurring-expense', item)} className="btn btn-secondary">Edit</button>
-                <button onClick={() => handleDelete(item.id)} className="btn btn-danger">Delete</button>
+                <button
+                  onClick={() => onNavigate('edit-recurring-expense', item)}
+                  className="btn btn-secondary"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(item.id)}
+                  className="btn btn-danger"
+                >
+                  Delete
+                </button>
               </div>
             </div>
           ))}
@@ -67,4 +90,4 @@ const RecurringExpenses = ({ group, onBack, onNavigate }) => {
   );
 };
 
-export default RecurringExpenses; 
+export default RecurringExpenses;

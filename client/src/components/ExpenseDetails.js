@@ -10,11 +10,9 @@ const ExpenseDetails = ({ expense, onBack, onUpdate, onDelete }) => {
   const [showEdit, setShowEdit] = useState(false);
   const [currentUser] = useState(JSON.parse(localStorage.getItem('user')));
 
-  const token = localStorage.getItem('token');
-
   useEffect(() => {
     fetchExpenseDetails();
-  }, [expense.id]);
+  }, [fetchExpenseDetails]);
 
   const fetchExpenseDetails = async () => {
     try {
@@ -60,7 +58,7 @@ const ExpenseDetails = ({ expense, onBack, onUpdate, onDelete }) => {
 
   if (showEdit) {
     return (
-      <EditExpense 
+      <EditExpense
         expense={expenseDetails}
         onSave={handleEdit}
         onCancel={() => setShowEdit(false)}
@@ -71,7 +69,9 @@ const ExpenseDetails = ({ expense, onBack, onUpdate, onDelete }) => {
   return (
     <div className="expense-details">
       <div className="expense-details-header">
-        <button onClick={onBack} className="back-btn">← Back to Expenses</button>
+        <button onClick={onBack} className="back-btn">
+          ← Back to Expenses
+        </button>
         <div className="expense-actions">
           {canEdit() && (
             <button onClick={() => setShowEdit(true)} className="edit-btn">
@@ -97,7 +97,8 @@ const ExpenseDetails = ({ expense, onBack, onUpdate, onDelete }) => {
           <strong>Paid by:</strong> {expenseDetails.paid_by_username}
         </p>
         <p className="expense-meta">
-          <strong>Date:</strong> {new Date(expenseDetails.created_at).toLocaleDateString()}
+          <strong>Date:</strong>{' '}
+          {new Date(expenseDetails.created_at).toLocaleDateString()}
         </p>
         {expenseDetails.description && (
           <p className="expense-description">
@@ -109,22 +110,32 @@ const ExpenseDetails = ({ expense, onBack, onUpdate, onDelete }) => {
       <div className="members-section">
         <h3>Split Between Members ({expenseDetails.members.length})</h3>
         <div className="members-list">
-          {expenseDetails.members.map(member => (
+          {expenseDetails.members.map((member) => (
             <div key={member.id} className="member-item">
               <div className="member-info">
                 <span className="member-name">{member.username}</span>
-                <span className="member-share">${parseFloat(member.share_amount).toFixed(2)}</span>
+                <span className="member-share">
+                  ${parseFloat(member.share_amount).toFixed(2)}
+                </span>
               </div>
             </div>
           ))}
         </div>
         <div className="split-summary">
-          <p><strong>Total:</strong> ${parseFloat(expenseDetails.amount).toFixed(2)}</p>
-          <p><strong>Per person:</strong> ${(parseFloat(expenseDetails.amount) / expenseDetails.members.length).toFixed(2)}</p>
+          <p>
+            <strong>Total:</strong> $
+            {parseFloat(expenseDetails.amount).toFixed(2)}
+          </p>
+          <p>
+            <strong>Per person:</strong> $
+            {(
+              parseFloat(expenseDetails.amount) / expenseDetails.members.length
+            ).toFixed(2)}
+          </p>
         </div>
       </div>
     </div>
   );
 };
 
-export default ExpenseDetails; 
+export default ExpenseDetails;

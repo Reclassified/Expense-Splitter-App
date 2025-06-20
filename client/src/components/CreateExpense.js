@@ -6,7 +6,7 @@ const CreateExpense = ({ group, onBack }) => {
   const [formData, setFormData] = useState({
     title: '',
     amount: '',
-    description: ''
+    description: '',
   });
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [groupMembers, setGroupMembers] = useState([]);
@@ -15,11 +15,9 @@ const CreateExpense = ({ group, onBack }) => {
   const [splitMode, setSplitMode] = useState('equal'); // 'equal' or 'custom'
   const [customSplits, setCustomSplits] = useState({});
 
-  const token = localStorage.getItem('token');
-
   useEffect(() => {
     fetchGroupMembers();
-  }, [group.id]);
+  }, [fetchGroupMembers]);
 
   const fetchGroupMembers = async () => {
     try {
@@ -27,7 +25,7 @@ const CreateExpense = ({ group, onBack }) => {
       setGroupMembers(response.data.members);
       // Initialize custom splits
       const initialSplits = {};
-      response.data.members.forEach(member => {
+      response.data.members.forEach((member) => {
         initialSplits[member.user_id] = '';
       });
       setCustomSplits(initialSplits);
@@ -39,14 +37,14 @@ const CreateExpense = ({ group, onBack }) => {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   const handleMemberToggle = (memberId) => {
-    setSelectedMembers(prev => {
+    setSelectedMembers((prev) => {
       if (prev.includes(memberId)) {
-        return prev.filter(id => id !== memberId);
+        return prev.filter((id) => id !== memberId);
       } else {
         return [...prev, memberId];
       }
@@ -54,13 +52,15 @@ const CreateExpense = ({ group, onBack }) => {
   };
 
   const handleCustomSplitChange = (memberId, value) => {
-    setCustomSplits(prev => ({ ...prev, [memberId]: value }));
+    setCustomSplits((prev) => ({ ...prev, [memberId]: value }));
   };
 
   const validateCustomSplits = () => {
     if (splitMode !== 'custom') return true;
-    const total = Object.values(customSplits)
-      .reduce((sum, val) => sum + (parseFloat(val) || 0), 0);
+    const total = Object.values(customSplits).reduce(
+      (sum, val) => sum + (parseFloat(val) || 0),
+      0,
+    );
     return Math.abs(total - parseFloat(formData.amount)) < 0.01;
   };
 
@@ -97,9 +97,13 @@ const CreateExpense = ({ group, onBack }) => {
         amount: parseFloat(formData.amount),
         description: formData.description.trim(),
         memberIds: selectedMembers,
-        splits: splitMode === 'custom' 
-          ? selectedMembers.map(id => ({ userId: id, amount: parseFloat(customSplits[id]) })) 
-          : null,
+        splits:
+          splitMode === 'custom'
+            ? selectedMembers.map((id) => ({
+                userId: id,
+                amount: parseFloat(customSplits[id]),
+              }))
+            : null,
       };
 
       await api.post('/expenses', expenseData);
@@ -116,11 +120,13 @@ const CreateExpense = ({ group, onBack }) => {
       <div className="create-expense-modal">
         <div className="modal-header">
           <h3>Add New Expense</h3>
-          <button onClick={onBack} className="close-btn">×</button>
+          <button onClick={onBack} className="close-btn">
+            ×
+          </button>
         </div>
-        
+
         {error && <div className="error-message">{error}</div>}
-        
+
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="expenseTitle">Expense Title *</label>
@@ -134,7 +140,7 @@ const CreateExpense = ({ group, onBack }) => {
               required
             />
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="expenseAmount">Amount ($) *</label>
             <input
@@ -149,7 +155,7 @@ const CreateExpense = ({ group, onBack }) => {
               required
             />
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="expenseDescription">Description</label>
             <textarea
@@ -161,15 +167,27 @@ const CreateExpense = ({ group, onBack }) => {
               rows="3"
             />
           </div>
-          
+
           <div className="form-group">
             <label>Split Between Members *</label>
             <div className="split-mode-toggle">
-              <button type="button" className={splitMode === 'equal' ? 'active' : ''} onClick={() => setSplitMode('equal')}>Equal</button>
-              <button type="button" className={splitMode === 'custom' ? 'active' : ''} onClick={() => setSplitMode('custom')}>Custom</button>
+              <button
+                type="button"
+                className={splitMode === 'equal' ? 'active' : ''}
+                onClick={() => setSplitMode('equal')}
+              >
+                Equal
+              </button>
+              <button
+                type="button"
+                className={splitMode === 'custom' ? 'active' : ''}
+                onClick={() => setSplitMode('custom')}
+              >
+                Custom
+              </button>
             </div>
             <div className="members-selection">
-              {groupMembers.map(member => (
+              {groupMembers.map((member) => (
                 <div key={member.user_id} className="member-item">
                   <label className="member-checkbox">
                     <input
@@ -179,31 +197,43 @@ const CreateExpense = ({ group, onBack }) => {
                     />
                     <span className="member-name">{member.username}</span>
                   </label>
-                  {splitMode === 'custom' && selectedMembers.includes(member.user_id) && (
-                    <input
-                      type="number"
-                      className="split-input"
-                      value={customSplits[member.user_id]}
-                      onChange={(e) => handleCustomSplitChange(member.user_id, e.target.value)}
-                      placeholder="0.00"
-                      step="0.01"
-                    />
-                  )}
+                  {splitMode === 'custom' &&
+                    selectedMembers.includes(member.user_id) && (
+                      <input
+                        type="number"
+                        className="split-input"
+                        value={customSplits[member.user_id]}
+                        onChange={(e) =>
+                          handleCustomSplitChange(
+                            member.user_id,
+                            e.target.value,
+                          )
+                        }
+                        placeholder="0.00"
+                        step="0.01"
+                      />
+                    )}
                 </div>
               ))}
             </div>
             {splitMode === 'equal' && selectedMembers.length > 0 && (
               <p className="split-info">
-                Each member will pay: ${(parseFloat(formData.amount || 0) / selectedMembers.length).toFixed(2)}
+                Each member will pay: $
+                {(
+                  parseFloat(formData.amount || 0) / selectedMembers.length
+                ).toFixed(2)}
               </p>
             )}
             {splitMode === 'custom' && (
               <p className="split-info">
-                Total assigned: ${Object.values(customSplits).reduce((sum, val) => sum + (parseFloat(val) || 0), 0).toFixed(2)}
+                Total assigned: $
+                {Object.values(customSplits)
+                  .reduce((sum, val) => sum + (parseFloat(val) || 0), 0)
+                  .toFixed(2)}
               </p>
             )}
           </div>
-          
+
           <div className="modal-actions">
             <button type="button" onClick={onBack} className="cancel-btn">
               Cancel
@@ -218,4 +248,4 @@ const CreateExpense = ({ group, onBack }) => {
   );
 };
 
-export default CreateExpense; 
+export default CreateExpense;

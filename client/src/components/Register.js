@@ -7,7 +7,7 @@ const Register = ({ onLogin, onSwitchToLogin }) => {
     username: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -15,7 +15,7 @@ const Register = ({ onLogin, onSwitchToLogin }) => {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -114,7 +114,11 @@ const Register = ({ onLogin, onSwitchToLogin }) => {
         </form>
         <p className="auth-switch">
           Already have an account?{' '}
-          <button type="button" onClick={onSwitchToLogin} className="link-button">
+          <button
+            type="button"
+            onClick={onSwitchToLogin}
+            className="link-button"
+          >
             Login here
           </button>
         </p>
@@ -123,4 +127,4 @@ const Register = ({ onLogin, onSwitchToLogin }) => {
   );
 };
 
-export default Register; 
+export default Register;

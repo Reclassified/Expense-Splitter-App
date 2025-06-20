@@ -10,8 +10,6 @@ const Dashboard = ({ onNavigate, refreshKey }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const token = localStorage.getItem('token');
-
   useEffect(() => {
     const currentUser = JSON.parse(localStorage.getItem('user'));
     setUser(currentUser);
@@ -19,7 +17,7 @@ const Dashboard = ({ onNavigate, refreshKey }) => {
       fetchDashboardData();
     } else {
       setLoading(false);
-      setError("No user found, please log in again.");
+      setError('No user found, please log in again.');
     }
   }, [refreshKey]);
 
@@ -29,13 +27,12 @@ const Dashboard = ({ onNavigate, refreshKey }) => {
       const [groupsRes, expensesRes, balanceSummaryRes] = await Promise.all([
         api.get('/groups'),
         api.get('/expenses/recent'),
-        api.get('/balances/summary')
+        api.get('/balances/summary'),
       ]);
 
       setGroups(groupsRes.data);
       setRecentExpenses(expensesRes.data);
       setBalanceSummary(balanceSummaryRes.data);
-      
     } catch (err) {
       setError('Failed to fetch dashboard data');
       console.error('Error fetching dashboard data:', err);
@@ -100,7 +97,9 @@ const Dashboard = ({ onNavigate, refreshKey }) => {
           </div>
           <div className="summary-content">
             <h3>You're Owed</h3>
-            <p className={`summary-amount ${getBalanceColor(balanceSummary.totalOwedToYou)}`}>
+            <p
+              className={`summary-amount ${getBalanceColor(balanceSummary.totalOwedToYou)}`}
+            >
               ${balanceSummary.totalOwedToYou}
             </p>
             {parseFloat(balanceSummary.totalOwedToYou) > 0 && (
@@ -115,7 +114,9 @@ const Dashboard = ({ onNavigate, refreshKey }) => {
           </div>
           <div className="summary-content">
             <h3>You Owe</h3>
-            <p className={`summary-amount ${getBalanceColor(-balanceSummary.totalOwed)}`}>
+            <p
+              className={`summary-amount ${getBalanceColor(-balanceSummary.totalOwed)}`}
+            >
               ${balanceSummary.totalOwed}
             </p>
             {parseFloat(balanceSummary.totalOwed) > 0 && (
@@ -130,12 +131,18 @@ const Dashboard = ({ onNavigate, refreshKey }) => {
           </div>
           <div className="summary-content">
             <h3>Net Balance</h3>
-            <p className={`summary-amount ${getBalanceColor(balanceSummary.netBalance)}`}>
+            <p
+              className={`summary-amount ${getBalanceColor(balanceSummary.netBalance)}`}
+            >
               {getBalanceText(balanceSummary.netBalance)}
             </p>
             {parseFloat(balanceSummary.netBalance) !== 0 && (
-              <span className={`badge ${parseFloat(balanceSummary.netBalance) > 0 ? 'badge-success' : 'badge-danger'}`}>
-                {parseFloat(balanceSummary.netBalance) > 0 ? 'In Credit' : 'In Debt'}
+              <span
+                className={`badge ${parseFloat(balanceSummary.netBalance) > 0 ? 'badge-success' : 'badge-danger'}`}
+              >
+                {parseFloat(balanceSummary.netBalance) > 0
+                  ? 'In Credit'
+                  : 'In Debt'}
               </span>
             )}
           </div>
@@ -146,14 +153,14 @@ const Dashboard = ({ onNavigate, refreshKey }) => {
       <div className="quick-actions">
         <h2>Quick Actions</h2>
         <div className="action-buttons">
-          <button 
+          <button
             onClick={() => onNavigate('groups')}
             className="btn btn-primary"
           >
             <span>👥</span>
             Manage Groups
           </button>
-          <button 
+          <button
             onClick={() => onNavigate('create-group')}
             className="btn btn-success"
           >
@@ -167,22 +174,23 @@ const Dashboard = ({ onNavigate, refreshKey }) => {
       <div className="dashboard-section">
         <div className="section-header">
           <h2>Your Groups</h2>
-          <button 
+          <button
             onClick={() => onNavigate('groups')}
             className="btn btn-secondary"
           >
             View All
           </button>
         </div>
-        
+
         {groups.length === 0 ? (
           <div className="empty-state">
             <div className="empty-state-icon">👥</div>
             <h3 className="empty-state-title">No Groups Yet</h3>
             <p className="empty-state-description">
-              Create your first group to start splitting expenses with friends and family.
+              Create your first group to start splitting expenses with friends
+              and family.
             </p>
-            <button 
+            <button
               onClick={() => onNavigate('create-group')}
               className="btn btn-primary"
             >
@@ -191,9 +199,9 @@ const Dashboard = ({ onNavigate, refreshKey }) => {
           </div>
         ) : (
           <div className="groups-grid">
-            {groups.slice(0, 3).map(group => (
-              <div 
-                key={group.id} 
+            {groups.slice(0, 3).map((group) => (
+              <div
+                key={group.id}
                 className="group-card"
                 onClick={() => onNavigate('group-details', group)}
               >
@@ -224,14 +232,14 @@ const Dashboard = ({ onNavigate, refreshKey }) => {
       <div className="dashboard-section">
         <div className="section-header">
           <h2>Recent Expenses</h2>
-          <button 
+          <button
             onClick={() => onNavigate('expenses')}
             className="btn btn-secondary"
           >
             View All
           </button>
         </div>
-        
+
         {recentExpenses.length === 0 ? (
           <div className="empty-state">
             <div className="empty-state-icon">📊</div>
@@ -242,16 +250,19 @@ const Dashboard = ({ onNavigate, refreshKey }) => {
           </div>
         ) : (
           <div className="expenses-list">
-            {recentExpenses.slice(0, 5).map(expense => (
+            {recentExpenses.slice(0, 5).map((expense) => (
               <div key={expense.id} className="expense-item">
                 <div className="expense-info">
                   <h4>{expense.title}</h4>
                   <p className="expense-meta">
-                    {expense.group_name} • {expense.paid_by_username} • {new Date(expense.created_at).toLocaleDateString()}
+                    {expense.group_name} • {expense.paid_by_username} •{' '}
+                    {new Date(expense.created_at).toLocaleDateString()}
                   </p>
                 </div>
                 <div className="expense-amount">
-                  <span className="amount">${parseFloat(expense.amount).toFixed(2)}</span>
+                  <span className="amount">
+                    ${parseFloat(expense.amount).toFixed(2)}
+                  </span>
                   {expense.paid_by === user?.id && (
                     <span className="badge badge-success">You Paid</span>
                   )}
@@ -265,4 +276,4 @@ const Dashboard = ({ onNavigate, refreshKey }) => {
   );
 };
 
-export default Dashboard; 
+export default Dashboard;

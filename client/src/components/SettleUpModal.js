@@ -19,7 +19,7 @@ const SettleUpModal = ({ group, currentUser, debtor, onBack, onSettled }) => {
       await api.post('/payments', {
         groupId: group.id,
         payerId: currentUser.id, // Current user is paying
-        payeeId: debtor.userId,  // The person who is owed
+        payeeId: debtor.userId, // The person who is owed
         amount: parseFloat(amount),
         currency: group.currency || 'USD',
         notes,
@@ -36,21 +36,36 @@ const SettleUpModal = ({ group, currentUser, debtor, onBack, onSettled }) => {
       <div className="create-expense-modal">
         <div className="modal-header">
           <h3>Settle up with {debtor.username}</h3>
-          <button onClick={onBack} className="close-btn">×</button>
+          <button onClick={onBack} className="close-btn">
+            ×
+          </button>
         </div>
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Amount</label>
-            <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} step="0.01" required />
+            <input
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              step="0.01"
+              required
+            />
           </div>
           <div className="form-group">
             <label>Notes (Optional)</label>
-            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} />
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+            />
           </div>
           <div className="modal-actions">
-            <button type="button" onClick={onBack}>Cancel</button>
-            <button type="submit" disabled={loading}>{loading ? 'Settling...' : 'Settle Up'}</button>
+            <button type="button" onClick={onBack}>
+              Cancel
+            </button>
+            <button type="submit" disabled={loading}>
+              {loading ? 'Settling...' : 'Settle Up'}
+            </button>
           </div>
         </form>
       </div>
@@ -58,4 +73,4 @@ const SettleUpModal = ({ group, currentUser, debtor, onBack, onSettled }) => {
   );
 };
 
-export default SettleUpModal; 
+export default SettleUpModal;

@@ -12,7 +12,7 @@ const CreateGroup = ({ onBack }) => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    api.get('/currency/supported').then(res => {
+    api.get('/currency/supported').then((res) => {
       setSupportedCurrencies(res.data);
     });
   }, []);
@@ -20,7 +20,7 @@ const CreateGroup = ({ onBack }) => {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -33,7 +33,6 @@ const CreateGroup = ({ onBack }) => {
       return;
     }
 
-    const token = localStorage.getItem('token');
     try {
       await api.post('/groups', formData);
       onBack(); // Go back to the groups list on success
@@ -47,11 +46,13 @@ const CreateGroup = ({ onBack }) => {
       <div className="create-group-modal">
         <div className="modal-header">
           <h3>Create New Group</h3>
-          <button onClick={onBack} className="close-btn">×</button>
+          <button onClick={onBack} className="close-btn">
+            ×
+          </button>
         </div>
-        
+
         {error && <div className="error-message">{error}</div>}
-        
+
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="groupName">Group Name *</label>
@@ -65,7 +66,7 @@ const CreateGroup = ({ onBack }) => {
               required
             />
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="groupDescription">Description</label>
             <textarea
@@ -77,7 +78,7 @@ const CreateGroup = ({ onBack }) => {
               rows="3"
             />
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="groupCurrency">Currency *</label>
             <select
@@ -87,10 +88,14 @@ const CreateGroup = ({ onBack }) => {
               onChange={handleChange}
               required
             >
-              {supportedCurrencies.map(c => <option key={c} value={c}>{c}</option>)}
+              {supportedCurrencies.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
             </select>
           </div>
-          
+
           <div className="modal-actions">
             <button type="button" onClick={onBack} className="cancel-btn">
               Cancel
@@ -105,4 +110,4 @@ const CreateGroup = ({ onBack }) => {
   );
 };
 
-export default CreateGroup; 
+export default CreateGroup;

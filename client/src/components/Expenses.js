@@ -13,15 +13,13 @@ const Expenses = ({ group, onBack, onNavigate }) => {
   const [showImportModal, setShowImportModal] = useState(false);
   const [exportingPDF, setExportingPDF] = useState(false);
 
-  const token = localStorage.getItem('token');
-
   const fetchData = async () => {
     if (!group?.id) return;
     try {
       setLoading(true);
       const [expensesRes, groupRes] = await Promise.all([
         api.get(`/expenses/group/${group.id}`),
-        api.get(`/groups/${group.id}`)
+        api.get(`/groups/${group.id}`),
       ]);
       setExpenses(expensesRes.data);
       setGroupData(groupRes.data);
@@ -35,10 +33,11 @@ const Expenses = ({ group, onBack, onNavigate }) => {
 
   useEffect(() => {
     fetchData();
-  }, [group?.id]);
+  }, [fetchData]);
 
   const handleDeleteExpense = async (expenseId) => {
-    if (!window.confirm('Are you sure you want to delete this expense?')) return;
+    if (!window.confirm('Are you sure you want to delete this expense?'))
+      return;
 
     try {
       await api.delete(`/expenses/${expenseId}`);
@@ -49,14 +48,20 @@ const Expenses = ({ group, onBack, onNavigate }) => {
   };
 
   const canEditExpense = (expense) => {
-    const member = groupData?.members.find(m => m.user_id === currentUser?.id);
-    return expense.paid_by === currentUser?.id ||
-           member?.role === 'owner' ||
-           member?.role === 'admin';
+    const member = groupData?.members.find(
+      (m) => m.user_id === currentUser?.id,
+    );
+    return (
+      expense.paid_by === currentUser?.id ||
+      member?.role === 'owner' ||
+      member?.role === 'admin'
+    );
   };
 
   const canDeleteExpense = (expense) => {
-    const member = groupData?.members.find(m => m.user_id === currentUser?.id);
+    const member = groupData?.members.find(
+      (m) => m.user_id === currentUser?.id,
+    );
     return expense.paid_by === currentUser?.id || member?.role === 'owner';
   };
 
@@ -64,13 +69,17 @@ const Expenses = ({ group, onBack, onNavigate }) => {
     if (expense.paid_by === currentUser?.id) {
       // If the user paid, check if they are owed money.
       // This happens if their share is less than the total amount.
-      const userShare = expense.members.find(m => m.user_id === currentUser?.id)?.share_amount || 0;
+      const userShare =
+        expense.members.find((m) => m.user_id === currentUser?.id)
+          ?.share_amount || 0;
       if (parseFloat(expense.amount) > parseFloat(userShare)) {
         return { type: 'paid', label: 'You Paid', color: 'success' };
       }
     } else {
       // If the user did not pay, check if they owe money.
-      const userShare = expense.members.find(m => m.user_id === currentUser?.id)?.share_amount || 0;
+      const userShare =
+        expense.members.find((m) => m.user_id === currentUser?.id)
+          ?.share_amount || 0;
       if (parseFloat(userShare) > 0) {
         return { type: 'owed', label: 'You Owe', color: 'warning' };
       }
@@ -79,13 +88,18 @@ const Expenses = ({ group, onBack, onNavigate }) => {
   };
 
   const getTotalExpenses = () => {
-    return expenses.reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
+    return expenses.reduce(
+      (sum, expense) => sum + parseFloat(expense.amount),
+      0,
+    );
   };
 
   const getYourTotalOwed = () => {
     return expenses.reduce((sum, expense) => {
       if (expense.paid_by === currentUser?.id) return sum;
-      const userShare = expense.members.find(m => m.user_id === currentUser?.id);
+      const userShare = expense.members.find(
+        (m) => m.user_id === currentUser?.id,
+      );
       return sum + (userShare ? parseFloat(userShare.share_amount) : 0);
     }, 0);
   };
@@ -127,7 +141,9 @@ const Expenses = ({ group, onBack, onNavigate }) => {
       const response = await api.get(`/expenses/group/${group.id}/export/pdf`, {
         responseType: 'blob',
       });
-      const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+      const url = window.URL.createObjectURL(
+        new Blob([response.data], { type: 'application/pdf' }),
+      );
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', `expenses-${group.id}.pdf`);
@@ -161,27 +177,43 @@ const Expenses = ({ group, onBack, onNavigate }) => {
       </div>
     );
   }
-  
+
   return (
     <div className="expenses-container">
       <div className="expenses-header">
         <div className="header-content">
-          <button onClick={onBack} className="back-btn">← Back to Group</button>
+          <button onClick={onBack} className="back-btn">
+            ← Back to Group
+          </button>
           <h2>Expenses - {groupData?.name}</h2>
           <p className="header-subtitle">
             Track and manage expenses in this group
           </p>
         </div>
-        <button onClick={handleExportCSV} className="btn btn-secondary" disabled={exporting}>
+        <button
+          onClick={handleExportCSV}
+          className="btn btn-secondary"
+          disabled={exporting}
+        >
           {exporting ? 'Exporting...' : 'Export as CSV'}
         </button>
-        <button onClick={handleExportPDF} className="btn btn-secondary" disabled={exportingPDF}>
+        <button
+          onClick={handleExportPDF}
+          className="btn btn-secondary"
+          disabled={exportingPDF}
+        >
           {exportingPDF ? 'Exporting...' : 'Export as PDF'}
         </button>
-        <button onClick={() => setShowImportModal(true)} className="btn btn-secondary">
-            Import from CSV
+        <button
+          onClick={() => setShowImportModal(true)}
+          className="btn btn-secondary"
+        >
+          Import from CSV
         </button>
-        <button onClick={() => onNavigate('create-expense')} className="btn btn-primary">
+        <button
+          onClick={() => onNavigate('create-expense')}
+          className="btn btn-primary"
+        >
           <span>➕</span>
           Add Expense
         </button>
@@ -231,16 +263,23 @@ const Expenses = ({ group, onBack, onNavigate }) => {
           <p className="empty-state-description">
             Start adding expenses to track shared costs in this group.
           </p>
-          <button onClick={() => onNavigate('create-expense')} className="btn btn-primary">
+          <button
+            onClick={() => onNavigate('create-expense')}
+            className="btn btn-primary"
+          >
             Add Your First Expense
           </button>
         </div>
       ) : (
         <div className="expenses-list">
-          {expenses.map(expense => {
+          {expenses.map((expense) => {
             const status = getExpenseStatus(expense);
             return (
-              <div key={expense.id} className="expense-card" onClick={() => onNavigate('expense-details', expense)}>
+              <div
+                key={expense.id}
+                className="expense-card"
+                onClick={() => onNavigate('expense-details', expense)}
+              >
                 <div className="expense-main-info">
                   <div className="expense-header">
                     <h3>{expense.title}</h3>
@@ -252,11 +291,11 @@ const Expenses = ({ group, onBack, onNavigate }) => {
                       )}
                     </div>
                   </div>
-                  
+
                   <p className="expense-description">
                     {expense.description || 'No description'}
                   </p>
-                  
+
                   <div className="expense-meta">
                     <span className="meta-item">
                       <span className="meta-icon">👤</span>
@@ -272,30 +311,35 @@ const Expenses = ({ group, onBack, onNavigate }) => {
                     </span>
                   </div>
                 </div>
-                
+
                 <div className="expense-actions">
                   <div className="expense-amount">
-                    <span className="amount">${parseFloat(expense.amount).toFixed(2)}</span>
+                    <span className="amount">
+                      ${parseFloat(expense.amount).toFixed(2)}
+                    </span>
                     {status && status.type === 'owed' && (
                       <span className="your-share">
-                        Your share: ${expense.members.find(m => m.user_id === currentUser?.id)?.share_amount || '0.00'}
+                        Your share: $
+                        {expense.members.find(
+                          (m) => m.user_id === currentUser?.id,
+                        )?.share_amount || '0.00'}
                       </span>
                     )}
                   </div>
                   <div className="action-buttons">
                     {canEditExpense(expense) && (
-                      <button 
+                      <button
                         onClick={(e) => {
                           e.stopPropagation();
                           onNavigate('edit-expense', expense);
-                        }} 
+                        }}
                         className="btn btn-secondary btn-sm"
                       >
                         Edit
                       </button>
                     )}
                     {canDeleteExpense(expense) && (
-                      <button 
+                      <button
                         onClick={(e) => {
                           e.stopPropagation();
                           handleDeleteExpense(expense.id);
@@ -316,4 +360,4 @@ const Expenses = ({ group, onBack, onNavigate }) => {
   );
 };
 
-export default Expenses; 
+export default Expenses;

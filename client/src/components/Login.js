@@ -5,7 +5,7 @@ import './Auth.css';
 const Login = ({ onLogin, onSwitchToRegister }) => {
   const [formData, setFormData] = useState({
     username: '',
-    password: ''
+    password: '',
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -13,7 +13,7 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -68,7 +68,11 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
         </form>
         <p className="auth-switch">
           Don't have an account?{' '}
-          <button type="button" onClick={onSwitchToRegister} className="link-button">
+          <button
+            type="button"
+            onClick={onSwitchToRegister}
+            className="link-button"
+          >
             Register here
           </button>
         </p>
@@ -77,4 +81,4 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
   );
 };
 
-export default Login; 
+export default Login;

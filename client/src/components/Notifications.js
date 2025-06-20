@@ -37,11 +37,16 @@ const Notifications = ({ onNavigate, onMarkAsRead }) => {
       {notifications.length === 0 ? (
         <div className="notification-item">No new notifications.</div>
       ) : (
-        notifications.map(n => (
-          <div key={n.id} className={`notification-item ${n.is_read ? 'read' : ''}`}>
+        notifications.map((n) => (
+          <div
+            key={n.id}
+            className={`notification-item ${n.is_read ? 'read' : ''}`}
+          >
             <p>{n.message}</p>
             {!n.is_read && (
-              <button onClick={() => handleMarkAsRead(n.id)}>Mark as Read</button>
+              <button onClick={() => handleMarkAsRead(n.id)}>
+                Mark as Read
+              </button>
             )}
           </div>
         ))
@@ -50,4 +55,4 @@ const Notifications = ({ onNavigate, onMarkAsRead }) => {
   );
 };
 
-export default Notifications; 
+export default Notifications;
