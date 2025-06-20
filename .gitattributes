@@ -1,0 +1,10 @@
+# Ensure consistent line endings
+* text=auto
+
+# Mark lock files as linguist-generated
+package-lock.json linguist-generated=true
+client/package-lock.json linguist-generated=true
+server/package-lock.json linguist-generated=true
+
+# Treat docs as documentation
+*.md linguist-documentation=true 
