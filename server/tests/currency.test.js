@@ -35,4 +35,4 @@ describe('currency utils', () => {
     const result = await convert(100, 'USD', 'XYZ');
     expect(result).toBeNull();
   });
-}); 
+});

@@ -8,7 +8,9 @@ import DebtSummary from './DebtSummary';
 import './Balances.css';
 
 const Loading = () => <div className="loading">Calculating balances...</div>;
-const ErrorMessage = ({ message }) => <div className="error-message">{message}</div>;
+const ErrorMessage = ({ message }) => (
+  <div className="error-message">{message}</div>
+);
 
 const Balances = ({ group, onBack }) => {
   const [balanceData, setBalanceData] = useState(null);

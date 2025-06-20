@@ -23,4 +23,4 @@ describe('BalanceSummary', () => {
     expect(getByText('Status:')).toBeInTheDocument();
     expect(getByText('Unbalanced')).toBeInTheDocument();
   });
-}); 
+});

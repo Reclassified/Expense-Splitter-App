@@ -16,7 +16,13 @@ jest.mock('../database', () => {
   return {
     prepare: jest.fn(() => ({
       all: jest.fn(() => [
-        { id: 1, user_id: 1, message: 'Test notification', is_read: 0, created_at: '2024-01-01' },
+        {
+          id: 1,
+          user_id: 1,
+          message: 'Test notification',
+          is_read: 0,
+          created_at: '2024-01-01',
+        },
       ]),
       run: jest.fn(() => ({ changes: 1 })),
     })),
@@ -30,4 +36,4 @@ describe('GET /notifications', () => {
     expect(Array.isArray(res.body)).toBe(true);
     expect(res.body[0]).toHaveProperty('message', 'Test notification');
   });
-}); 
+});
