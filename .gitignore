@@ -106,4 +106,20 @@ public
 
 # Build folder
 dist/
-build/ 
+build/
+
+# Database
+/server/expense_splitter.db
+
+# OS generated files
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Build output
+/build
+/dist
+/.tmp 
