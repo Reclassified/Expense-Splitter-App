@@ -5,12 +5,12 @@ const cron = require('node-cron');
 const db = require('./database');
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+const app = require('./app');
 
 // Initialize database
 require('./database');
 
-const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3001;
 
 // Swagger setup
 const swaggerOptions = {
@@ -150,5 +150,5 @@ cron.schedule('0 * * * *', () => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

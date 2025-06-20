@@ -1,10 +1,26 @@
 {
   "devDependencies": {
+    "@babel/preset-env": "^7.27.2",
+    "@babel/preset-react": "^7.27.1",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "babel-jest": "^30.0.2",
     "eslint": "^8.57.1",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-prettier": "^5.5.0",
-    "prettier": "^3.5.3"
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^30.0.2",
+    "prettier": "^3.5.3",
+    "supertest": "^7.1.1"
+  },
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "test": "jest"
   }
 }
