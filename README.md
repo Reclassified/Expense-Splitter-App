@@ -5,6 +5,8 @@ A full-stack expense splitter app with React frontend, Node.js/Express backend, 
 ## Table of Contents
 - [Features](#features)
 - [Quick Start](#quick-start)
+- [Environment Variables](#environment-variables)
+- [Deployment Tips](#deployment-tips)
 - [Documentation](#documentation)
 - [Contributing](#contributing)
 
@@ -31,6 +33,15 @@ A full-stack expense splitter app with React frontend, Node.js/Express backend, 
    docker-compose up --build
    ```
 5. Access the app at http://localhost:3000
+
+## Environment Variables
+- Backend: Copy `.env.example` to `.env` in the `server` folder and fill in the required values.
+- Frontend: API URLs are set for local development. For production, update them in `client/src/api.js` or use environment variables as needed.
+
+## Deployment Tips
+- Use Docker Compose for local or production deployment.
+- For production, set secure values in your `.env` files and configure HTTPS in your reverse proxy (e.g., Nginx).
+- Regularly update dependencies and rebuild images.
 
 ## Documentation
 - API: Swagger docs at `/api-docs`
