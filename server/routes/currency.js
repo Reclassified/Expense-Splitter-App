@@ -14,7 +14,7 @@ const router = express.Router();
  *         name: base
  *         schema:
  *           type: string
- *         description: Base currency (default: USD)
+ *         description: "Base currency (default: USD)"
  *     responses:
  *       200:
  *         description: Exchange rates
