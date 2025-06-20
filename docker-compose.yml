@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  server:
+    build:
+      context: ./server
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./server/expense_splitter.db:/usr/src/app/expense_splitter.db
+    env_file:
+      - ./server/.env
+
+  client:
+    build:
+      context: ./client
+    ports:
+      - "3000:80"
+    depends_on:
+      - server 
