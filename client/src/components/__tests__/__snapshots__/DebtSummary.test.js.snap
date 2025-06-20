@@ -1,0 +1,58 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DebtSummary renders correctly and matches snapshot 1`] = `
+<div>
+  <div
+    class="creditors-section"
+  >
+    <h3>
+      Who's Owed Money
+    </h3>
+    <div
+      class="creditors-list"
+    >
+      <div
+        class="creditor-item"
+      >
+        <span
+          class="creditor-name"
+        >
+          Alice
+        </span>
+        <span
+          class="creditor-amount positive"
+        >
+          +$
+          50.25
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    class="debtors-section"
+  >
+    <h3>
+      Who Owes Money
+    </h3>
+    <div
+      class="debtors-list"
+    >
+      <div
+        class="debtor-item"
+      >
+        <span
+          class="debtor-name"
+        >
+          Bob
+        </span>
+        <span
+          class="debtor-amount negative"
+        >
+          -$
+          50.25
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
